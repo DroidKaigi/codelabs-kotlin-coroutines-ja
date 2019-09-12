@@ -28,7 +28,7 @@
                   feedback-link="">
     
       <google-codelab-step label="前書き" duration="0">
-        <p>このコードラボでは、Androidアプリで<a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank">Kotlin Coroutines</a>を使用する方法を学びます。バックグラウンドスレッドを管理する新しい方法で、コールバックの使用を最小限に抑えることでコードを簡素化することができます。Coroutinesは、データベースやネットワーク通信などの長時間実行タスクの非同期なコールバックをシーケンシャルなコードに変換するKotlinの機能です。</p>
+        <p>このコードラボでは、Androidアプリで<a href="https://kotlinlang.org/docs/reference/coroutines.html" target="_blank">Kotlin Coroutines</a>を使用する方法を学びます。バックグラウンドスレッドを管理する新しい方法で、コールバックの使用を最小限に抑えることでコードを簡素化することができます。Coroutinesは、データベースやネットワーク通信などの長時間実行タスクの非同期なコールバックを書かれた順番の通りに実行されるコードに変換するKotlinの機能です。</p>
 <p>以下はこれから行うことの概要を示すコードスニペットです。</p>
 <pre><code>// 非同期なコールバック
 networkRequest { result -&gt;
@@ -50,7 +50,7 @@ databaseSave（result）
 <h2 is-upgraded>このコードラボで学べること</h2>
 <ul>
 <li>Coroutinesを使用したコードの書き方と実行結果の取得方法</li>
-<li>中断関数を使用して非同期なコードをシーケンシャルなものに変換する方法</li>
+<li>suspend(中断)関数を使用して非同期なコードをシーケンシャルなものに変換する方法</li>
 <li><code>launch</code>や<code>runBlocking</code>を使用して、コードの実行を制御する方法</li>
 <li><code>suspendCoroutine</code>を使用して既存のAPIをCoroutinesに変換する手法</li>
 <li>アーキテクチャーコンポーネントと一緒にCoroutinesを使用する方法</li>
@@ -59,7 +59,7 @@ databaseSave（result）
 <h2 is-upgraded>必要となる前提知識</h2>
 <ul>
 <li>アーキテクチャコンポーネントのViewModel、LiveData、Repository、Roomについての知識</li>
-<li>拡張関数やラムダを始めとしたKotlin syntaxについての知識</li>
+<li>拡張関数やラムダを始めとしたKotlinの構文についての知識</li>
 <li>メインスレッド、バックグラウンドスレッド、コールバックをはじめとしたAndroidにおけるスレッドについての基礎的な知識</li>
 <li>このコードラボで使用されるアーキテクチャコンポーネントの概要については、<a href="https://codelabs.developers.google.com/codelabs/android-room-with-a-view/#0" target="_blank">Room with a View</a>を参照してください</li>
 <li>Kotlinの構文の概要については、<a href="https://www.udacity.com/course/kotlin-bootcamp-for-programmers--ud9011" target="_blank">Kotlin Bootcamp for Programmers</a>を参照してください</li>
@@ -67,7 +67,7 @@ databaseSave（result）
 </ul>
 <h2 is-upgraded>このコードラボで必要なもの</h2>
 <ul>
-<li><a href="https://developer.android.com/studio/" target="_blank">Android Studio 3.3</a>（他のバージョンでも問題なくコードラボは進められる場合はありますが、いくつかの要素がなかったり違う見た目になっている場合があります）<br>﻿</li>
+<li><a href="https://developer.android.com/studio/" target="_blank">Android Studio 3.3</a>（他のバージョンでも問題なくコードラボは進められる場合はありますが、いくつかの要素がなかったり違う見た目になっている場合があります）</li>
 </ul>
 
 
@@ -134,7 +134,7 @@ databaseSave（result）
     
       <google-codelab-step label="KotlinにおけるCoroutines" duration="0">
         <p>Androidではメインスレッドをブロックしないことが非常に重要です。メインスレッドはすべてのUIの更新を管理する単一のスレッドで、クリックハンドラなどUIからのすべてのコールバックが呼ばれるスレッドでもあります。つまり、最高のユーザーエクスペリエンスを保証するためにはメインスレッドを円滑に動かすことが必須なのです。</p>
-<p>アプリがカクつかずに動作するには、メインスレッドは<a href="https://medium.com/androiddevelopers/exceed-the-android-speed-limit-b73a0692abc1" target="_blank">16ms以下（毎秒約60フレーム）の間隔</a>で画面を更新する必要があります。大きなJSONデータセットをパースする、データベースにデータを書き込む、ネットワークからデータを取得するといった多くのタスクは一16ms以上かかります。そういったコードをメインスレッドから呼ぶとアプリは止まったりカクついたり、最悪の場合フリーズしていまうことがあります。そしてメインスレッドを長時間ブロックしてしまうと、<strong>アプリケーションが応答していません</strong> ダイアログと共にアプリはクラッシュしてしまうこともあるでしょう。</p>
+<p>アプリがカクつかずに動作するには、メインスレッドは<a href="https://medium.com/androiddevelopers/exceed-the-android-speed-limit-b73a0692abc1" target="_blank">16ms以下（毎秒約60フレーム）の間隔</a>で画面を更新する必要があります。大きなJSONデータセットをパースする、データベースにデータを書き込む、ネットワークからデータを取得するといった多くのタスクは一16ms以上かかります。そういったコードをメインスレッドから呼ぶとアプリは止まったりカクついたり、最悪の場合フリーズしてしまうことがあります。そしてメインスレッドを長時間ブロックしてしまうと、<strong>アプリケーションが応答していません</strong> ダイアログと共にアプリはクラッシュしてしまうこともあるでしょう。</p>
 <p>Coroutinesでメインセーフティを導入することによってこの問題がどのように解決されるかについては、以下の動画でも紹介しています。</p>
 <h3 is-upgraded>コールバックパターン</h3>
 <p>コールバックはメインスレッドをブロックせずに長時間実行タスクを処理するパターンのひとつです。コールバックを使うことによって、background threadで長時間実行タスクを開始することができます。タスクが完了すると、メインスレッドでコールバックが呼ばれ結果が通知されます。</p>
@@ -150,12 +150,12 @@ fun makeNetworkRequest() {
     // slowFetchが呼ばれると、結果を待たずにmakeNetworkRequest()は終了する
 }
 </code></pre>
-<p>このコードは<a href="https://developer.android.com/reference/android/support/annotation/UiThread" target="_blank"><br>@UiThread</a>でannotateされているので、メインスレッド上で実行できるくらいに速くrunしなくてはなりません。次の画面更新が遅れないように早くreturnされなくてはなりません。しかし<code>slowFetch</code>が完了するのに数秒かかるため、main threadでは結果が返ってくるのを待つことができません。<code>show(result)</code>コールバックを使うことによって、background threadで<code>slowFetch</code>を実行し、準備ができたら結果を返すことが可能になります。</p>
+<p>このコードは<a href="https://developer.android.com/reference/android/support/annotation/UiThread" target="_blank"><br>@UiThread</a>アノテーション(注釈)が付いているので、メインスレッド上で実行できるくらいに高速に動作しなければなりません。つまり、その後の画面の更新が遅れないよう、非常に素早く処理を終わらせる必要があります。しかし<code>slowFetch</code>が完了するのに数秒かかるため、main threadでは結果が返ってくるのを待つことができません。<code>show(result)</code>コールバックを使うことによって、background threadで<code>slowFetch</code>を実行し、準備ができたら結果を返すことが可能になります。</p>
 <h3 is-upgraded>Coroutinesを使ってコールバックをなくす</h3>
 <p>コールバックは優れたパターンですが、いくつかの欠点があります。コールバックを頻繁に使用するコードは読みにくく、理解するのが難しくなります。またコールバックでは、例外などの一部の言語機能が使用できません。</p>
 <p>Kotlin Coroutinesを使用すると、コールバックを使ったコードを同期的なコードに変換することができます。一般に同期的なコードは可読性が高く、例外などの言語機能も使用することができます。</p>
 <p>コールバックもCoroutinesのどちらも「長時間実行タスクの結果を待って実行を再開する」という同じことを行いますが、コードの見た目は大きく異なります。</p>
-<p><code>suspend</code>キーワードは、Kotlinにおいて関数や関数タイプがCoroutinesで使用できるように宣言する方法です。Coroutinesで<code>suspend</code>のついた関数を呼ぶと、通常の関数のようにその関数がreturnするまでスレッドをブロックするのではなく、結果の用意ができるまで処理を<strong>suspend</strong>し、結果を取得するとその場所から処理を<strong>resume</strong>します。結果を待ってる間は、他の関数やCoroutinesが実行できるように<strong>実行中のスレッドをブロックするのをやめます</strong>。</p>
+<p><code>suspend</code>キーワードは、Kotlinにおいて関数や関数タイプがCoroutinesで使用できるように宣言する方法です。Coroutinesで<code>suspend</code>のついた関数を呼ぶと、通常の関数のようにその関数がreturnするまでスレッドをブロックするのではなく、結果の用意ができるまで処理を<strong>suspend</strong>（中断）し、結果を取得するとその場所から処理を<strong>resume</strong>（再開）します。結果を待ってる間は、他の関数やCoroutinesが実行できるように<strong>実行中のスレッドをブロックするのをやめます</strong>。</p>
 <p>以下の例では、<code>makeNetworkRequest()</code>と<code>slowFetch()</code>がsuspend関数になっています。</p>
 <pre><code>// Coroutinesを使った時間のかかるリクエスト
 @UiThread
@@ -193,7 +193,7 @@ suspend fun slowFetch(): SlowResult { ... }
 suspend fun anotherFetch(): AnotherResult { ... }
 </code></pre>
 <h5 is-upgraded>Coroutinesの別名</h5>
-<p>他の言語における<code>async</code>と<code>await</code>パターンはCoroutinesを基づいて作られています。このパターンで例えると、<code>suspend</code>は<code>async</code>と似ているといえます。ただしKotlinでは<code>suspend</code>関数を呼ぶ場合<code>await()</code>は暗黙的です。</p>
+<p>他の言語における<code>async</code>と<code>await</code>パターンはCoroutinesに基づいて作られています。このパターンで例えると、<code>suspend</code>は<code>async</code>と似ているといえます。ただしKotlinでは<code>suspend</code>関数を呼ぶと暗黙的に<code>await()</code>相当の待機状態になります。</p>
 <p>またKotlinには、<code>async</code>ビルダーで生成されたCoroutinesの結果を待つのに使える<code>Deferred.await()</code>メソッドもあります。</p>
 <p>次はstart sample appをCoroutinesを使ったものに置き換えていきます。﻿</p>
 
@@ -203,7 +203,7 @@ suspend fun anotherFetch(): AnotherResult { ... }
       <google-codelab-step label="Coroutinesを使ってUIを制御する" duration="0">
         <p>この演習では、遅延後にメッセージを表示するcoroutineを作成します。はじめるあたって、Android Studioでプロジェクト<code>kotlin-coroutines-start</code>を開いていることを確認してください。</p>
 <h3 is-upgraded>MainViewModelにcoroutine scopeを追加</h3>
-<p>Kotlinでは、すべてのcoroutineは<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-coroutine-scope/" target="_blank"><br>CoroutineScope</a>の中で実行されます。Scopeは、jobを通じてcoroutineのライフサイクルを制御します。Scopeのjobをキャンセルすると、そのスコープの中で開始されたすべてのcoroutineがキャンセルされます。Androidでは、ActivityやFragmentから別画面に遷移した時などにスコープを使って実行中のcoroutineをまとめてキャンセルすることができます。またscopeには規定のdispatcherの指定することもできます。dispatcherはcoroutineがどのスレッドで実行されるかを制御します。</p>
+<p>Kotlinでは、すべてのcoroutineは<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-coroutine-scope/" target="_blank"><br>CoroutineScope</a>の中で実行されます。Scopeは、jobを通じてcoroutineの生存期間を制御します。Scopeのjobをキャンセルすると、そのスコープの中で開始されたすべてのcoroutineがキャンセルされます。Androidでは、ActivityやFragmentから別画面に遷移した時などにスコープを使って実行中のcoroutineをまとめてキャンセルすることができます。またscopeには規定のdispatcherの指定することもできます。dispatcherはcoroutineがどのスレッドで実行されるかを制御します。</p>
 <p><code>MainViewModel.kt</code>でcoroutineを使うには、scopeを次のように作成します。</p>
 <pre><code>private val viewModelJob = Job()
 
