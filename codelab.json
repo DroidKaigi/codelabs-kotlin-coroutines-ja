@@ -1,0 +1,21 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2019-09-12T15:13:31+09:00",
+  "id": "kotlin_coroutines_ja",
+  "duration": 0,
+  "title": "Using Kotlin Coroutines in your Android App",
+  "summary": "Using Kotlin Coroutines in your Android App",
+  "source": "kotlin_coroutines_ja.md",
+  "theme": "",
+  "status": null,
+  "category": [
+    "codelab"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "kotlin_coroutines_ja"
+}
