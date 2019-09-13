@@ -61,7 +61,7 @@ databaseSave（result）
 <li>アーキテクチャコンポーネントのViewModel、LiveData、Repository、Roomについての知識</li>
 <li>拡張関数やラムダを始めとしたKotlinの構文についての知識</li>
 <li>メインスレッド、バックグラウンドスレッド、コールバックをはじめとしたAndroidにおけるスレッドについての基礎的な知識</li>
-<li>このコードラボで使用されるアーキテクチャコンポーネントの概要については、<a href="https://codelabs.developers.google.com/codelabs/android-room-with-a-view/#0" target="_blank">Room with a View</a>を参照してください</li>
+<li>このコードラボで使用されるアーキテクチャコンポーネントの概要については、<a href="https://codelabs.developers.google.com/codelabs/android-room-with-a-view/#0" target="_blank">Room with a View</a>を参照してください<br></li>
 <li>Kotlinの構文の概要については、<a href="https://www.udacity.com/course/kotlin-bootcamp-for-programmers--ud9011" target="_blank">Kotlin Bootcamp for Programmers</a>を参照してください</li>
 <li>Androidでのスレッドの概要については、<a href="https://developer.android.com/guide/background/" target="_blank">Guide to background processing</a>を参照してください。</li>
 </ul>
@@ -134,9 +134,9 @@ databaseSave（result）
     
       <google-codelab-step label="KotlinにおけるCoroutines" duration="0">
         <p>Androidではメインスレッドをブロックしないことが非常に重要です。メインスレッドはすべてのUIの更新を管理する単一のスレッドで、クリックハンドラなどUIからのすべてのコールバックが呼ばれるスレッドでもあります。つまり、最高のユーザーエクスペリエンスを保証するためにはメインスレッドを円滑に動かすことが必須なのです。</p>
-<p>アプリがカクつかずに動作するには、メインスレッドは<a href="https://medium.com/androiddevelopers/exceed-the-android-speed-limit-b73a0692abc1" target="_blank">16ms以下（毎秒約60フレーム）の間隔</a>で画面を更新する必要があります。大きなJSONデータセットをパースする、データベースにデータを書き込む、ネットワークからデータを取得するといった多くのタスクは一16ms以上かかります。そういったコードをメインスレッドから呼ぶとアプリは止まったりカクついたり、最悪の場合フリーズしてしまうことがあります。そしてメインスレッドを長時間ブロックしてしまうと、<strong>アプリケーションが応答していません</strong> ダイアログと共にアプリはクラッシュしてしまうこともあるでしょう。</p>
-<p>Coroutinesでメインセーフティを導入することによってこの問題がどのように解決されるかについては、以下の動画でも紹介しています。</p>
-<h3 is-upgraded>コールバックパターン</h3>
+<p>アプリがカクつかずに動作するには、メインスレッドは<a href="https://medium.com/androiddevelopers/exceed-the-android-speed-limit-b73a0692abc1" target="_blank">16ms以下（毎秒約60フレーム）の間隔</a>で画面を更新する必要があります。大きなJSONデータセットをパースする、データベースにデータを書き込む、ネットワークからデータを取得するといった多くのタスクは16ms以上かかります。そういったコードをメインスレッドから呼ぶとアプリは止まったりカクついたり、最悪の場合フリーズしてしまうことがあります。そしてメインスレッドを長時間ブロックしてしまうと、<strong>アプリケーションが応答していません</strong> ダイアログと共にアプリはクラッシュしてしまうこともあるでしょう。</p>
+<p>Coroutinesでメインセーフティを導入することによってこの問題がどのように解決されるかについては、 <a href="https://www.youtube.com/watch?v=ne6CD1ZhAI0" target="_blank">この動画</a> でも紹介しています。</p>
+<h2 is-upgraded>コールバックパターン</h2>
 <p>コールバックはメインスレッドをブロックせずに長時間実行タスクを処理するパターンのひとつです。コールバックを使うことによって、background threadで長時間実行タスクを開始することができます。タスクが完了すると、メインスレッドでコールバックが呼ばれ結果が通知されます。</p>
 <p>コールバックパターンの例を見てみましょう。</p>
 <pre><code>// コールバックを使った時間のかかるリクエスト
@@ -151,7 +151,7 @@ fun makeNetworkRequest() {
 }
 </code></pre>
 <p>このコードは<a href="https://developer.android.com/reference/android/support/annotation/UiThread" target="_blank"><br>@UiThread</a>アノテーション(注釈)が付いているので、メインスレッド上で実行できるくらいに高速に動作しなければなりません。つまり、その後の画面の更新が遅れないよう、非常に素早く処理を終わらせる必要があります。しかし<code>slowFetch</code>が完了するのに数秒かかるため、main threadでは結果が返ってくるのを待つことができません。<code>show(result)</code>コールバックを使うことによって、background threadで<code>slowFetch</code>を実行し、準備ができたら結果を返すことが可能になります。</p>
-<h3 is-upgraded>Coroutinesを使ってコールバックをなくす</h3>
+<h2 is-upgraded>Coroutinesを使ってコールバックをなくす</h2>
 <p>コールバックは優れたパターンですが、いくつかの欠点があります。コールバックを頻繁に使用するコードは読みにくく、理解するのが難しくなります。またコールバックでは、例外などの一部の言語機能が使用できません。</p>
 <p>Kotlin Coroutinesを使用すると、コールバックを使ったコードを同期的なコードに変換することができます。一般に同期的なコードは可読性が高く、例外などの言語機能も使用することができます。</p>
 <p>コールバックもCoroutinesのどちらも「長時間実行タスクの結果を待って実行を再開する」という同じことを行いますが、コードの見た目は大きく異なります。</p>
@@ -201,7 +201,7 @@ suspend fun anotherFetch(): AnotherResult { ... }
       </google-codelab-step>
     
       <google-codelab-step label="Coroutinesを使ってUIを制御する" duration="0">
-        <p>この演習では、遅延後にメッセージを表示するcoroutineを作成します。はじめるあたって、Android Studioでプロジェクト<code>kotlin-coroutines-start</code>を開いていることを確認してください。</p>
+        <p>この演習では、遅延後にメッセージを表示するcoroutineを作成します。はじめるにあたって、Android Studioでプロジェクト<code>kotlin-coroutines-start</code>を開いていることを確認してください。</p>
 <h3 is-upgraded>MainViewModelにcoroutine scopeを追加</h3>
 <p>Kotlinでは、すべてのcoroutineは<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/-coroutine-scope/" target="_blank"><br>CoroutineScope</a>の中で実行されます。Scopeは、jobを通じてcoroutineの生存期間を制御します。Scopeのjobをキャンセルすると、そのスコープの中で開始されたすべてのcoroutineがキャンセルされます。Androidでは、ActivityやFragmentから別画面に遷移した時などにスコープを使って実行中のcoroutineをまとめてキャンセルすることができます。またscopeには規定のdispatcherの指定することもできます。dispatcherはcoroutineがどのスレッドで実行されるかを制御します。</p>
 <p><code>MainViewModel.kt</code>でcoroutineを使うには、scopeを次のように作成します。</p>
@@ -268,15 +268,14 @@ fun onMainViewClicked() {
    viewModelScope.launch {
 // このcoroutineを1秒間中断する
        delay(1_000)
-       // resume in the main dispatcher
-       // _snackbar.value can be called directly from main thread
+       // main dispatcherで再開する
+       // _snackbar.value はメインスレッドから直接呼べる
        _snackBar.value = &#34;Hello, from coroutines!&#34;
    }
 }
 </code></pre>
 <p>このコードも1秒待ってsnackbarを表示しますが、いくつか重要な違いがあります</p>
 <ol type="1">
-<li><code>viewModelScope.launch</code> will start a coroutine in the <code>viewModelScope</code>.</li>
 <li><code>viewModelScope.launch</code>は<code>viewModelScope</code>でcoroutineを開始します。これは、<code>viewModelScope</code>に渡したジョブがキャンセルされると、このジョブまたはスコープ内のすべてのcoroutineがキャンセルされることを意味します。<code>delay</code>が返される前にユーザーがアクティビティを離れた場合、ViewModelを破棄する際に<code>onCleared</code>が呼び出されると、このcoroutineは自動的にキャンセルされます。</li>
 <li><code>viewModelScope</code>の既定のdispatcherは<code>Dispatchers.Main</code>なので、このcoroutineはメインスレッドでlaunchされます。他のスレッドを使う方法については後述されます。</li>
 <li><code>delay</code>は<code>suspend</code>関数です。これは、Android Studio左側にある<img src="img\fa7a8f74626ad62c.png">アイコンによって示されます。このcoroutineはメインスレッドで実行されますが、<code>delay</code>はスレッドを1秒間ブロックする訳ではありません。代わりに、1秒後にcoroutineが次のstatementで再開するようにdispatcherが予約をします。</li>
@@ -293,12 +292,13 @@ fun onMainViewClicked() {
 <p>ライブラリは、端末外でテストを実行するときにDispatchers.Mainを設定する方法やテストコードでcoroutineの実行をコントロールするtesting dispatcherを提供します。</p>
 <p>これにより以下が可能になります。</p>
 <ol type="1">
-<li>通常のsuspend関数の時間のauto-advance</li>
-<li>時間を明示的に成業して複数のcoroutineをテストする</li>
-<li>launchやasync code blockのbodyをeagerly executeする</li>
+<li>delayの無効化</li>
+<li>時間を明示的に制御して複数のcoroutineをテストする</li>
+<li>launchやasyncのcode blockを即時実行する</li>
 <li>テスト内のcoroutineの実行を一時停止、手動で進め、再開する</li>
-<li>例外の発生をテスト失敗として報告する<br>詳細については、<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/" target="_blank">kotlinx-coroutines-test</a>のドキュメントを参照してください。</li>
+<li>例外の発生をテスト失敗として報告する</li>
 </ol>
+<p>詳細については、<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/" target="_blank">kotlinx-coroutines-test</a>のドキュメントを参照してください。</p>
 <p>ライブラリは現在experimentalとされているため、このコードラボでは安定するまで既存のAPIを使用してテストを書く方法を紹介します。</p>
 <p><code>kotlinx-coroutines-test</code>を使用して書き換えられたテストコードはこの章の最後に記載します。</p>
 <h3 is-upgraded>既存のテストを確認する</h3>
@@ -371,8 +371,8 @@ fun whenMainViewModelClicked_showSnackbar() {
 <p>次の章では、既存のコールバックを使用したAPIをCoroutinesに変換する方法について確認します。</p>
 <h3 is-upgraded>delayはどうなった？</h3>
 <p>このテストにはまだ大きな問題が1つ残っています。<code>delay(1_000)</code>が <code>onMainViewClicked</code>にハードコードされているので、実行にまるまる1秒もかかるのです！</p>
-<p>テストは可能な限り速く実行されるべきですし、このテストは間違いなくより速く実行させることができます。<code>kotlinx-coroutines-test</code>が提供する<code>TestCoroutineDispatcher</code>を使用すると、「仮想時間」を制御して、実際に1秒待機することなく1秒の遅延で関数を呼び出すことができます。</p>
-<p>以下はまだExperimentalな<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-test-coroutine-dispatcher/index.html" target="_blank"><br>TestCoroutineDispatcher</a>を使ってこの章のテストを書き換えたものです。</p>
+<p>テストは可能な限り速く実行されるべきですし、このテストは間違いなくより速く実行させることができます。<code>kotlinx-coroutines-test</code>が提供する<code>TestCoroutineDispatcher</code>を使用すると、「仮想時間」を制御して、実際には1秒待機することなく1秒遅延の関数を呼び出すことができます。</p>
+<p>以下はまだExperimentalな<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-test-coroutine-dispatcher/index.html" target="_blank">TestCoroutineDispatcher</a>を使ってこの章のテストを書き換えたものです。</p>
 <pre><code>/**
 * 同じテストをexperimentalなkotlinx-coroutines-test API
 * で書いた例
@@ -452,7 +452,7 @@ class MainViewModelTest {
 <p>このアプリはアーキテクチャコンポーネントを使用して、ネットワークとローカルデータベースの両方を使用するデータレイヤーを、前章のプロジェクトに付け加える形で実装しています。メインビューがクリックされると、ネットワークから取得した新しいタイトルをデータベースに保存して、画面に表示します。少し時間をとって、新しいクラスに慣れましょう。</p>
 <ol type="1">
 <li><code>MainDatabase</code>には、Roomを使用して<code>Title</code>を読み書きするデータベースが実装されています。</li>
-<li><code>MainNetwork</code>には、新しいタイトルを取得するネットワークAPIを実装します。<code>FakeNetworkLibrary.kt</code>で定義された偽のネットワークライブラリを使用してタイトルを取得します。ネットワークライブラリはランダムにエラーを返します。<br>1。<code>TitleRepository</code>は、ネットワークとデータベースからのデータを組み合わせてタイトルを取得または更新するための単一のAPIを実装します。<br>1。<code>MainViewModelTest</code>は<code>MainViewModel</code>のテストを定義します。<br>1。「FakeNetworkCallAwaitTest」は、このコードラボで後ほど完了するテストです。</li>
+<li><code>MainNetwork</code>には、新しいタイトルを取得するネットワークAPIを実装します。<code>FakeNetworkLibrary.kt</code>で定義された偽のネットワークライブラリを使用してタイトルを取得します。ネットワークライブラリはランダムにエラーを返します。<br>1。<code>TitleRepository</code>は、ネットワークとデータベースからのデータを組み合わせてタイトルを取得または更新するための単一のAPIを実装します。<br>1。<code>MainViewModelTest</code>は<code>MainViewModel</code>のテストを定義します。<br>1。<code>FakeNetworkCallAwaitTest</code>は、このコードラボで後ほど完了するテストです。</li>
 </ol>
 <h2 is-upgraded>コールバックを使った既存のAPI</h2>
 <p><code>MainNetwork.kt</code>を開いて<code>fetchNewWelcome()</code>を確認してみましょう</p>
@@ -460,7 +460,7 @@ class MainViewModelTest {
 
 fun fetchNewWelcome(): FakeNetworkCall&lt;String&gt;
 </code></pre>
-<p><code>TitleRepository.kt</code>を開いて、fetchNewWelcomeでコールバックを使ってネットワークコールを行っていることを確認しましょう。</p>
+<p><code>TitleRepository.kt</code>を開いて、 <code>fetchNewWelcome()</code> でコールバックを使ってネットワークコールを行っていることを確認しましょう。</p>
 <p>この関数の返す<code>FakeNetworkCall</code>を使って、呼び出し元はリクエストに対するリスナを登録することができます。<code>fetchNewWelcome</code>を呼び出すと、ネットワークへのリクエストが長時間実行タスクとして開始され、同時に<code>addOnResultListener</code>を公開するオブジェクトを呼び出し元に返します。リクエストの完了やエラー時にコードを実行できるように、このコードでは<code>addOnResultListener</code>にコールバックを渡しています。</p>
 <pre><code>// TitleRepository.kt
 
@@ -524,7 +524,7 @@ suspend fun exampleUsage() {
 }
 </code></pre>
 <p>このパターンを使用して、<code>FakeNetworkCall</code>の中断関数を公開してみましょう。公開することでコールバックを使ったネットワークAPIをCoroutinesで使用できるようになります。</p>
-<h3 is-upgraded>キャンセルするには？</h3>
+<h2 is-upgraded>キャンセルするには？</h2>
 <p><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/suspend-coroutine.html" target="_blank"><br>suspendCoroutine</a>はcoroutineをキャンセルする必要がない場合に適しています。ただ、通常はキャンセルについて考慮する必要があり、その場合は<a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/suspend-cancellable-coroutine.html" target="_blank"><br>suspendCancellableCoroutine</a>が適しています。これを使用することでコールバックを使ったAPIへのキャンセルをサポートするライブラリにキャンセルをでんぱさせることが可能になります。</p>
 <h2 is-upgraded>suspendCoroutineを使用して、コールバックを使ったAPIをCoroutinesに変換する</h2>
 <p><code>TitleRepository.kt</code>の一番下までスクロールして、拡張機能を実装するTODOコメントを探しましょう。</p>
@@ -731,7 +731,7 @@ suspend fun refreshTitle() {
 <p><code>withContext</code>関数は、データベースへの追加がバックグラウンドスレッドで実行されることを保証するために使用されます。<code>insertTitle</code>はブロッキング関数なので、この指定は重要です。coroutineで実行されていても、終了までcoroutineが実行されるスレッドをブロックします。例えcoroutine内であっても、メインスレッドから<code>insertTitle</code>を呼ぶと、データベースの書き込み中にアプリがフリーズしてしまいます。</p>
 <p><code>withContext</code>を使用すると、coroutineは渡されたブロックを指定されたディスパッチャーで実行します。ここでは<code>Dispatchers.IO</code>を指定します。<code>Dispatchers.IO</code>は、データベース書き込みなどのIO操作を処理するために特別に調整された大きなスレッドプールです。<code>withContext</code>が終了すると、coroutineは直前に指定されていたディスパッチャーで処理を続行します。スレッドを短時間切り替えて、メインスレッドで実行すべきではないディスクIOやCPU負荷の高いタスクなど、時間のかかるタスクを実行するための良い方法です。</p>
 <p>この中断関数はcoroutineを起動しないため、ここではスコープは必要ありません。呼び出し元coroutineのスコープで関数が実行されます。</p>
-<p>このコードがロード状態を明示的に渡していないことに気づきましたか？このあとこの中断関数を呼ぶように<code>MainViewModel</code>を変更する時に、coroutineの実装内で明示的ににする必要がないことがわかります。</p>
+<p>このコードがロード状態を明示的に渡していないことに気づきましたか？このあとこの中断関数を呼ぶように<code>MainViewModel</code>を変更する時に、coroutineの実装内で明示的にする必要がないことがわかります。</p>
 <h3 is-upgraded>Kotlin APIでは中断関数を採用する</h3>
 <p>ここで定義されている拡張機能の<code>await</code>は、既存のAPIをcoroutineにブリッジさせるには良い方法です。しかし、呼び出し側が<code>await</code>を呼び出すことを忘れないことに依存します。Kotlinで使用するAPIを新しく設計するときは、<code>suspend</code>関数を通じて直接結果を返すほうが適切です。</p>
 <p><code>suspend fun fetchNewWelcome: String</code></p>
@@ -742,12 +742,12 @@ suspend fun refreshTitle() {
 
 fun refreshTitle() {
     viewModelScope.launch {
-         try {
+        try {
             _spinner.value = true
             repository.refreshTitle()
         } catch (error: TitleRefreshError) {
             _snackBar.value = error.message
-         } finally {
+        } finally {
             _spinner.value = false
         }
     }
@@ -910,7 +910,7 @@ class RefreshMainDataWorkTest {
                         }
     }
 
-@Test
+    @Test
     fun testRefreshMainDataWork() {
         // ListenableWorkerを取得
         val worker = TestListenableWorkerBuilder&lt;RefreshMainDataWork&gt;(context).build()
